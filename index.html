@@ -3,15 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Círculo de la Vida - Interactivo</title>
+  <title>Círculo de la Vida - Mejorado</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- HEADER -->
+  <header>
+    <img src="HEADER.jpg" alt="Encabezado" class="header-img">
+  </header>
+
   <h2>Círculo de la Vida</h2>
+
+  <!-- Campo para el nombre -->
+  <div class="name-input-container">
+    <label for="nombre">Tu Nombre:</label>
+    <input type="text" id="nombre" placeholder="Escribe tu nombre">
+  </div>
+  
+  <!-- Botones -->
+  <div class="buttons-container">
+    <button id="resetBtn">Reset</button>
+    <button id="downloadBtn">Descargar Imagen</button>
+  </div>
+
+  <!-- Contenedor principal -->
   <div class="container">
     <canvas id="lifeWheel"></canvas>
     <div id="sliders"></div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
