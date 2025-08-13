@@ -130,15 +130,35 @@ function createSliders() {
 // ===============================
 // FUNCIÓN: Obtener índice de categoría según posición
 // ===============================
+//function getCategoryIndexFromPosition(x, y) {
+ // const dx = x - centerX;
+ // const dy = y - centerY;
+ // let angle = Math.atan2(dy, dx);
+ // if (angle < -Math.PI / 2) angle += 2 * Math.PI;
+//  let index = Math.floor((angle + Math.PI / 2) / ((Math.PI * 2) / categories.length));
+ // return index;
+//}
 function getCategoryIndexFromPosition(x, y) {
-  const dx = x - centerX;
-  const dy = y - centerY;
-  let angle = Math.atan2(dy, dx);
-  if (angle < -Math.PI / 2) angle += 2 * Math.PI;
-  let index = Math.floor((angle + Math.PI / 2) / ((Math.PI * 2) / categories.length));
-  return index;
-}
+  const step = (Math.PI * 2) / categories.length;
+  const tolerance = 20; // tolerancia en píxeles para seleccionar el punto exacto
 
+  for (let i = 0; i < categories.length; i++) {
+    const angle = i * step - Math.PI / 2;
+    const valueRadius = (categories[i].value / 10) * radius;
+
+    const px = centerX + valueRadius * Math.cos(angle);
+    const py = centerY + valueRadius * Math.sin(angle);
+
+    // Distancia entre clic y punto real
+    const distToPoint = Math.sqrt(Math.pow(x - px, 2) + Math.pow(y - py, 2));
+
+    if (distToPoint <= tolerance) {
+      return i; // Encontramos la categoría tocada
+    }
+  }
+
+  return null; // Ninguna categoría fue tocada
+}
 // ===============================
 // FUNCIÓN: Actualizar valor desde posición
 // ===============================
