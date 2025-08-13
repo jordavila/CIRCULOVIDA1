@@ -1,22 +1,33 @@
+// ===============================
+// CONFIGURACIÓN INICIAL
+// ===============================
+
+// Categorías y valores iniciales
 const categories = [
-  { name: "Salud", value: 6 },
-  { name: "Carrera", value: 7 },
+  { name: "Salud", value: 5 },
+  { name: "Carrera", value: 5 },
   { name: "Finanzas", value: 5 },
-  { name: "Familia", value: 8 },
-  { name: "Amigos", value: 6 },
-  { name: "Diversión", value: 4 },
-  { name: "Crecimiento", value: 7 },
+  { name: "Familia", value: 5 },
+  { name: "Amigos", value: 5 },
+  { name: "Diversión", value: 5 },
+  { name: "Crecimiento", value: 5 },
   { name: "Aportar", value: 5 }
 ];
 
+// Elementos del DOM
 const canvas = document.getElementById("lifeWheel");
 const ctx = canvas.getContext("2d");
 const slidersDiv = document.getElementById("sliders");
+const nombreInput = document.getElementById("nombre");
+const resetBtn = document.getElementById("resetBtn");
+const downloadBtn = document.getElementById("downloadBtn");
 
 let centerX, centerY, radius;
 let draggingIndex = null;
 
-// Ajusta el canvas al tamaño de la pantalla
+// ===============================
+// FUNCIÓN: Ajustar tamaño del canvas
+// ===============================
 function resizeCanvas() {
   canvas.width = Math.min(window.innerWidth * 0.9, 500);
   canvas.height = canvas.width;
@@ -26,11 +37,14 @@ function resizeCanvas() {
   drawWheel();
 }
 
+// ===============================
+// FUNCIÓN: Dibujar el gráfico
+// ===============================
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const step = (Math.PI * 2) / categories.length;
 
-  // Dibujar círculos concéntricos
+  // Círculos concéntricos
   ctx.strokeStyle = "rgba(255,255,255,0.2)";
   for (let i = 1; i <= 10; i++) {
     ctx.beginPath();
@@ -38,7 +52,7 @@ function drawWheel() {
     ctx.stroke();
   }
 
-  // Dibujar líneas radiales y nombres con transparencia
+  // Líneas radiales + etiquetas
   categories.forEach((cat, i) => {
     const angle = i * step - Math.PI / 2;
     const x = centerX + radius * Math.cos(angle);
@@ -51,7 +65,7 @@ function drawWheel() {
     ctx.stroke();
 
     ctx.save();
-    ctx.fillStyle = "rgba(255,255,255,0.1)";
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
     ctx.font = "bold 14px Segoe UI";
     ctx.translate(centerX, centerY);
     ctx.rotate(angle);
@@ -60,7 +74,7 @@ function drawWheel() {
     ctx.restore();
   });
 
-  // Dibujar polígono de valores
+  // Polígono de valores
   ctx.beginPath();
   categories.forEach((cat, i) => {
     const angle = i * step - Math.PI / 2;
@@ -75,15 +89,28 @@ function drawWheel() {
   ctx.fill();
   ctx.strokeStyle = "#69c9b9";
   ctx.stroke();
+
+  // Nombre en el centro (transparente)
+  if (nombreInput.value.trim() !== "") {
+    ctx.font = "bold 24px Segoe UI";
+    ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.textAlign = "center";
+    ctx.fillText(nombreInput.value, centerX, centerY);
+  }
 }
 
+// ===============================
+// FUNCIÓN: Crear sliders
+// ===============================
 function createSliders() {
   slidersDiv.innerHTML = "";
   categories.forEach((cat, i) => {
     const container = document.createElement("div");
     container.className = "slider-container";
+
     const label = document.createElement("label");
     label.textContent = cat.name;
+
     const input = document.createElement("input");
     input.type = "range";
     input.min = 0;
@@ -93,12 +120,16 @@ function createSliders() {
       categories[i].value = parseInt(e.target.value);
       drawWheel();
     });
+
     container.appendChild(label);
     container.appendChild(input);
     slidersDiv.appendChild(container);
   });
 }
 
+// ===============================
+// FUNCIÓN: Obtener índice de categoría según posición
+// ===============================
 function getCategoryIndexFromPosition(x, y) {
   const dx = x - centerX;
   const dy = y - centerY;
@@ -108,6 +139,9 @@ function getCategoryIndexFromPosition(x, y) {
   return index;
 }
 
+// ===============================
+// FUNCIÓN: Actualizar valor desde posición
+// ===============================
 function updateValueFromPosition(index, x, y) {
   const dx = x - centerX;
   const dy = y - centerY;
@@ -119,7 +153,11 @@ function updateValueFromPosition(index, x, y) {
   drawWheel();
 }
 
-// Eventos de arrastre
+// ===============================
+// EVENTOS DE INTERACCIÓN
+// ===============================
+
+// Mouse
 canvas.addEventListener("mousedown", e => {
   draggingIndex = getCategoryIndexFromPosition(e.offsetX, e.offsetY);
 });
@@ -129,9 +167,8 @@ canvas.addEventListener("mousemove", e => {
   }
 });
 canvas.addEventListener("mouseup", () => draggingIndex = null);
-canvas.addEventListener("mouseleave", () => draggingIndex = null);
 
-// Eventos táctiles
+// Touch
 canvas.addEventListener("touchstart", e => {
   const rect = canvas.getBoundingClientRect();
   const touch = e.touches[0];
@@ -146,8 +183,30 @@ canvas.addEventListener("touchmove", e => {
 });
 canvas.addEventListener("touchend", () => draggingIndex = null);
 
+// Input nombre → redibuja con transparencia
+nombreInput.addEventListener("input", drawWheel);
+
+// Botón Reset
+resetBtn.addEventListener("click", () => {
+  categories.forEach(cat => cat.value = 5);
+  createSliders();
+  drawWheel();
+  nombreInput.value = "";
+});
+
+// Botón Descargar
+downloadBtn.addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.download = "circulo_de_la_vida.png";
+  link.href = canvas.toDataURL();
+  link.click();
+});
+
+// Ajuste de tamaño
 window.addEventListener("resize", resizeCanvas);
 
-// Inicializar
+// ===============================
+// INICIALIZACIÓN
+// ===============================
 createSliders();
 resizeCanvas();
