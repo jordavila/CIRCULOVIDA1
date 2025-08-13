@@ -228,7 +228,7 @@ downloadBtn.addEventListener("click", () => {
   // Añadir fecha y hora en la esquina inferior derecha
   const now = new Date();
   const fechaHora = now.toLocaleString(); // Fecha y hora local
-  tempCtx.font = "10px Segoe UI";
+  tempCtx.font = "14px Segoe UI";
   tempCtx.fillStyle = "rgba(255,255,255,0.7)";
   tempCtx.textAlign = "right";
   tempCtx.textBaseline = "bottom";
@@ -240,7 +240,6 @@ downloadBtn.addEventListener("click", () => {
   link.download = `${nombreArchivo}.png`;
   link.href = tempCanvas.toDataURL();
   link.click();
-});
 });
 
 // Ajuste de tamaño
