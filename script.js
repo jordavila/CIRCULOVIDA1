@@ -216,10 +216,31 @@ resetBtn.addEventListener("click", () => {
 
 // Botón Descargar
 downloadBtn.addEventListener("click", () => {
+  // Crear canvas temporal del mismo tamaño que el principal
+  const tempCanvas = document.createElement("canvas");
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  const tempCtx = tempCanvas.getContext("2d");
+
+  // Copiar el contenido del canvas principal
+  tempCtx.drawImage(canvas, 0, 0);
+
+  // Añadir fecha y hora en la esquina inferior derecha
+  const now = new Date();
+  const fechaHora = now.toLocaleString(); // Fecha y hora local
+  tempCtx.font = "10px Segoe UI";
+  tempCtx.fillStyle = "rgba(255,255,255,0.7)";
+  tempCtx.textAlign = "right";
+  tempCtx.textBaseline = "bottom";
+  tempCtx.fillText(fechaHora, tempCanvas.width - 10, tempCanvas.height - 10);
+
+  // Preparar nombre del archivo usando el nombre ingresado
+  const nombreArchivo = nombreInput.value.trim() || "circulo_de_la_vida";
   const link = document.createElement("a");
-  link.download = "circulo_de_la_vida.png";
-  link.href = canvas.toDataURL();
+  link.download = `${nombreArchivo}.png`;
+  link.href = tempCanvas.toDataURL();
   link.click();
+});
 });
 
 // Ajuste de tamaño
